@@ -1,0 +1,6 @@
+
+
+Generate cert hash:
+C:\WinApp\jdk-12.0.2\bin\keytool -exportcert -alias release_key -keystore D:/prj/Android/release/romanpulovrelease.keystore | C:\cygwin64\bin\openssl sha1 -binary | C:\cygwin64\bin\openssl base64
+
+pkFHBjmk5yNkPHiCqIVwIffqv54=

@@ -1,0 +1,13 @@
+{
+  "client_id" : "8748117a-8e7c-48dd-91a6-7938e498171a",
+  "authorization_user_agent" : "DEFAULT",
+  "redirect_uri" : "msauth://com.romanpulov.msaltest/pkFHBjmk5yNkPHiCqIVwIffqv54%3D",
+  "account_mode" : "SINGLE",
+  "broker_redirect_uri_registered": true,
+  "authorities" : [
+    {
+      "type": "AAD",
+      "authority_url": "https://login.microsoftonline.com/consumers"
+    }
+  ]
+}
