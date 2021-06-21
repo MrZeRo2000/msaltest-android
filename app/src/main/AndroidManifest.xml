@@ -29,8 +29,8 @@
                     note that the leading "/" is required for android:path
                 -->
                 <data
-                    android:host="com.romanpulov.msaltest"
-                    android:path="/pkFHBjmk5yNkPHiCqIVwIffqv54="
+                    android:host="com.romanpulov.msaltest.v1"
+                    android:path="/ru4om2kJmt1Z5rX4Px1teB9q1xY="
                     android:scheme="msauth" />
             </intent-filter>
         </activity>

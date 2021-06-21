@@ -1,7 +1,7 @@
 {
-  "client_id" : "8748117a-8e7c-48dd-91a6-7938e498171a",
+  "client_id" : "822e1701-ca26-41d2-923e-80f3bc3ae1cd",
   "authorization_user_agent" : "DEFAULT",
-  "redirect_uri" : "msauth://com.romanpulov.msaltest/pkFHBjmk5yNkPHiCqIVwIffqv54%3D",
+  "redirect_uri" : "msauth://com.romanpulov.msaltest.v1/ru4om2kJmt1Z5rX4Px1teB9q1xY%3D",
   "account_mode" : "SINGLE",
   "broker_redirect_uri_registered": true,
   "authorities" : [
