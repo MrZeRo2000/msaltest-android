@@ -12,6 +12,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.microsoft.identity.client.AuthenticationCallback;
 import com.microsoft.identity.client.IAccount;
 import com.microsoft.identity.client.IAuthenticationResult;
@@ -24,6 +26,8 @@ import com.microsoft.identity.client.exception.MsalException;
 import com.microsoft.identity.client.exception.MsalServiceException;
 import com.microsoft.identity.client.exception.MsalUiRequiredException;
 
+import org.json.JSONObject;
+
 import static java.security.AccessController.getContext;
 
 public class MainActivity extends AppCompatActivity {
@@ -33,6 +37,15 @@ public class MainActivity extends AppCompatActivity {
     private ISingleAccountPublicClientApplication mSingleAccountApp;
     private IAccount mAccount;
 
+    /**
+     * Extracts a scope array from a text field,
+     * i.e. from "User.Read User.ReadWrite" to ["user.read", "user.readwrite"]
+     */
+    private String[] getScopes() {
+        return "Files.ReadWrite.All".toLowerCase().split(" ");
+    }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Button loginButton = findViewById(R.id.loginButton);
-        loginButton.setOnClickListener(v -> mSingleAccountApp.signIn((Activity)v.getContext(), null, new String[]{"user.readwrite"}, getAuthInteractiveCallback()));
+        loginButton.setOnClickListener(v -> mSingleAccountApp.signIn((Activity)v.getContext(), null, getScopes(), getAuthInteractiveCallback()));
 
         Button logoutButton = findViewById(R.id.logoutButton);
         logoutButton.setOnClickListener(new View.OnClickListener() {
@@ -75,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
         actionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mSingleAccountApp.acquireTokenSilentAsync(new String[]{"user.readwrite"}, mAccount.getAuthority(), getAuthSilentCallback());
+                mSingleAccountApp.acquireTokenSilentAsync(getScopes(), mAccount.getAuthority(), getAuthSilentCallback());
             }
         });
 
@@ -202,9 +215,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSuccess(IAuthenticationResult authenticationResult) {
                 Log.d(TAG, "Successfully authenticated with token:" + authenticationResult.getAccessToken());
+                Log.d(TAG, "ID Token: " + authenticationResult.getAccount().getClaims().get("id_token"));
 
                 /* Successfully got a token, use it to call a protected resource - MSGraph */
-                //callGraphAPI(authenticationResult);
+                callGraphAPI(authenticationResult);
             }
 
             @Override
@@ -229,26 +243,25 @@ public class MainActivity extends AppCompatActivity {
      */
     private void callGraphAPI(final IAuthenticationResult authenticationResult) {
         Log.d(TAG, "auth token:" + authenticationResult.getAccessToken());
-        /*
+
         MSGraphRequestWrapper.callGraphAPIUsingVolley(
-                getContext(),
-                graphResourceTextView.getText().toString(),
+                getApplicationContext(),
+                "https://graph.microsoft.com/v1.0/me/drive/root/children",
                 authenticationResult.getAccessToken(),
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
-                          Log.d(TAG, "Response: " + response.toString());
-                        displayGraphResult(response);
+                        Log.d(TAG, "Response: " + response.toString());
+                        //displayGraphResult(response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.d(TAG, "Error: " + error.toString());
-                        displayError(error);
+                        //displayError(error);
                     }
                 });
-*/
     }
 
 
