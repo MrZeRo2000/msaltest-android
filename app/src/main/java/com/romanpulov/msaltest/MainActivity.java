@@ -5,12 +5,12 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
-import android.util.AttributeSet;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -26,9 +26,11 @@ import com.microsoft.identity.client.exception.MsalException;
 import com.microsoft.identity.client.exception.MsalServiceException;
 import com.microsoft.identity.client.exception.MsalUiRequiredException;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
-import static java.security.AccessController.getContext;
+import java.nio.charset.StandardCharsets;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -36,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
     /* Azure AD Variables */
     private ISingleAccountPublicClientApplication mSingleAccountApp;
     private IAccount mAccount;
+
+    private TextView mResponseText;
 
     /**
      * Extracts a scope array from a text field,
@@ -46,11 +50,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mResponseText = findViewById(R.id.responseText);
+        mResponseText.setMovementMethod(new ScrollingMovementMethod());
 
         Button loginButton = findViewById(R.id.loginButton);
         loginButton.setOnClickListener(v -> mSingleAccountApp.signIn((Activity)v.getContext(), null, getScopes(), getAuthInteractiveCallback()));
@@ -242,8 +248,6 @@ public class MainActivity extends AppCompatActivity {
      * Make an HTTP request to obtain MSGraph data
      */
     private void callGraphAPI(final IAuthenticationResult authenticationResult) {
-        Log.d(TAG, "auth token:" + authenticationResult.getAccessToken());
-
         MSGraphRequestWrapper.callGraphAPIUsingVolley(
                 getApplicationContext(),
                 "https://graph.microsoft.com/v1.0/me/drive/root/children",
@@ -252,13 +256,26 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONObject response) {
                         Log.d(TAG, "Response: " + response.toString());
+                        mResponseText.setText(response.toString());
+                        try {
+                            JSONObject jsonObject = new JSONObject(response.toString());
+                            JSONArray values = jsonObject.getJSONArray("value");
+                            for (int i = 0; i < values.length(); i++) {
+                                JSONObject o = values.getJSONObject(i);
+                                Log.d(TAG, o.toString());
+                            }
+
+                        } catch (JSONException e) {
+
+                        }
                         //displayGraphResult(response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.d(TAG, "Error: " + error.toString());
+                        String responseBody = new String(error.networkResponse.data, StandardCharsets.UTF_8);
+                        Log.d(TAG, "Error: " + responseBody);
                         //displayError(error);
                     }
                 });
