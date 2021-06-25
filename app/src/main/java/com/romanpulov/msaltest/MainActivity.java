@@ -98,7 +98,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        this.createAccountApp();
+    }
 
+    private void createAccountApp() {
         // Creates a PublicClientApplication object with res/raw/auth_config_single_account.json
         PublicClientApplication.createSingleAccountPublicClientApplication(this.getApplicationContext(),
                 R.raw.auth_config_single_account,
@@ -224,7 +227,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d(TAG, "ID Token: " + authenticationResult.getAccount().getClaims().get("id_token"));
 
                 /* Successfully got a token, use it to call a protected resource - MSGraph */
-                callGraphAPI(authenticationResult);
+                callGraphAPI(authenticationResult.getAccessToken(), "https://graph.microsoft.com/v1.0/me/drive/root/children");
             }
 
             @Override
@@ -247,11 +250,11 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Make an HTTP request to obtain MSGraph data
      */
-    private void callGraphAPI(final IAuthenticationResult authenticationResult) {
+    private void callGraphAPI(final String accessToken, final String url) {
         MSGraphRequestWrapper.callGraphAPIUsingVolley(
                 getApplicationContext(),
-                "https://graph.microsoft.com/v1.0/me/drive/root/children",
-                authenticationResult.getAccessToken(),
+                url,
+                accessToken,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
