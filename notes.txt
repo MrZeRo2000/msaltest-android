@@ -1,10 +1,8 @@
 Generate debug cert hash:
 C:\WinApp\jdk-12.0.2\bin\keytool -exportcert -alias androiddebugkey -keystore %HOMEPATH%\.android\debug.keystore | C:\cygwin64\bin\openssl sha1 -binary | C:\cygwin64\bin\openssl base64
-ru4om2kJmt1Z5rX4Px1teB9q1xY=
 
 
 Generate release cert hash:
 C:\WinApp\jdk-12.0.2\bin\keytool -exportcert -alias release_key -keystore D:/prj/Android/release/romanpulovrelease.keystore | C:\cygwin64\bin\openssl sha1 -binary | C:\cygwin64\bin\openssl base64
-pkFHBjmk5yNkPHiCqIVwIffqv54=
 
 
